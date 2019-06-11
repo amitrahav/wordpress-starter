@@ -7,32 +7,51 @@
 
 ## Credits
 
-- this template based on [WordPress Starter](https://github.com/justcoded/wordpress-starter) for composer support
+- this template based on [justCpded / WordPress Starter](https://github.com/justcoded/wordpress-starter) for composer support
 - this template also use [visiblevc/wordpress-starter](https://github.com/visiblevc/wordpress-starter/tree/master) for docker support.
 - .gitignore ready for wp-engine git push without core wp.
 
 ## Existing Project
 
-### 1. Navigate to project and clone git repo:
+1. Navigate to project root directory:
 
 ```bash
-cd /path/to/your/project/empty/folder/
-git clone http://repository-domain.com/your/project.git
+cd /path/to/your/project/folder/
+```
+
+2. Clone zipped specific repo files:
+
+```bash
+$ curl https://codeload.github.com/amitrahav/wordpress-starter/tar.gz/master | tar -xz --strip 1
+```
+
+3. If necessary remove old structure wp
+
+```bash
+$ rm -rf wp-admin wp-includes license.txt wp-activate.php wp-blog-header.php wp-comments-post.php wp-cron.php wp-links-opml.php wp-load.php wp-login.php wp-mail.php wp-settings.php wp-signup.php wp-trackback.php xmlrpc.php
+```
+
+4. Install all requirements from composer
+
+```bash
+composer update
 ```
 
 ## New Project
 
-1. Download wp core with composer
+1. create new project:
+
+```bash
+composer create-project amitrahav/wordpress-starter <name-of-project> && cd <name-of-project>
+```
+
+2. Download wp core with composer
 
 ```bash
 composer update
 ```
 
-2. create new project
-
-```bash
-composer update
-```
+3. start developing!
 
 ### Database setup
 
@@ -71,3 +90,8 @@ git checkout -b <issue#>_<short descr></short>
 - `DB_HOST` - Database host
 - `WP_ENV` - Set to environment (`development`, `staging`, `production`)
 - `WP_HOME` - Full URL to WordPress home (http://example.com)
+
+### Require Wp plugins and themes
+
+1. use [composer.json or composer cli](https://wpackagist.org/)
+2. if using docker, add themes or plugins to script/init.sh file to activate on wp cli when docker is up

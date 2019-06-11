@@ -4,16 +4,10 @@
   "license": "MIT",
   "description": "WordPress boilerplate with modern development tools, local development docker-compose support, env configuration, wp-engine ready for push, and an improved folder structure",
   "authors": [{
-      "name": "Alex Prokopenko",
-      "email": "aprokopenko@justcoded.com",
-      "homepage": "https://github.com/justcoded"
-    },
-    {
-      "name": "Amit Rahav",
-      "email": "amit.r.89@gmail.com",
-      "homepage": "https://github.com/amitrahav"
-    }
-  ],
+    "name": "Amit Rahav",
+    "email": "amit.r.89@gmail.com",
+    "homepage": "https://github.com/amitrahav"
+  }],
   "keywords": [
     "starter kit",
     "justcoded",

@@ -41,6 +41,9 @@ node_modules
 /wp-content/plugins/regenerate-thumbnails/
 /wp-content/plugins/wordpress-seo/
 /wp-content/plugins/contact-form-7/
+!/wp-content/plugins/.gitkeep
+!/wp-content/mu-plugins/.gitkeep
+!/wp-content/uploads/.gitkeep
 
 # File system junk files
 Desktop.ini
