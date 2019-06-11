@@ -1,0 +1,31 @@
+version: '3'
+services:
+    wordpress:
+        privileged: true
+        image: 'visiblevc/wordpress:latest'
+        ports:
+            - '8080:80'
+            - '443:443'
+        volumes:
+            - './data:/data'
+            - './scripts:/docker-entrypoint-initwp.d'
+            - './wp-content/themes:/app/wp-content/themes'
+            - './wp-content/plugins:/app/wp-content/plugins'
+            - './wp-content/mu-plugins:/app/wp-content/mu-plugins'
+        environment:
+            DB_HOST: db
+            DB_NAME: wordpress
+            DB_PASS: root
+            WP_LOCALE: he_IL
+            URL_REPLACE: 'http://localhost:8080'
+            WP_DEBUG: 'true'
+            PLUGINS: ''
+            THEMES: ''
+    db:
+        image: 'mariadb:10'
+        volumes:
+            - 'data:/var/lib/mysql'
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+volumes:
+    data: null
