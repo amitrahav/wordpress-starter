@@ -12,6 +12,7 @@ services:
             - './wp-content/themes:/app/wp-content/themes'
             - './wp-content/plugins:/app/wp-content/plugins'
             - './wp-content/mu-plugins:/app/wp-content/mu-plugins'
+            - './logs.ini:/usr/local/etc/php/conf.d/logs.ini'
         environment:
             DB_HOST: db
             DB_NAME: wordpress
