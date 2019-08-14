@@ -37,6 +37,13 @@ $ rm -rf wp-admin wp-includes license.txt wp-activate.php wp-blog-header.php wp-
 composer update
 ```
 
+5. Ignore all ops files by adding
+
+```bash
+echo -e "/app
+/data/\n /data/logs\n !/data/.gitkeep\n !/data/logs/.gitkeep\n environments\n scripts\n *.example\n *.lock\n logs.ini\n robots.txt\n $(cat .gitignore)" > .gitifnore
+```
+
 ## New Project
 
 1. create new project:

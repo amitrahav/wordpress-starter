@@ -32,7 +32,7 @@
 		"php": ">=7.0",
 		"composer/installers": "^1.4",
 		"vlucas/phpdotenv": "^3.3.2",
-		"johnpbloch/wordpress": "^5.2.1",
+		"johnpbloch/wordpress": "^5.2.2",
 		"justcoded/wordpress-composer-scripts": "~1.2",
 		"advanced-custom-fields/advanced-custom-fields-pro": "*",
 		"wpackagist-plugin/contact-form-7": "*",
