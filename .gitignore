@@ -181,4 +181,4 @@ data/*.sql
 *.wmv
 *.avi
 
-# HERE GOES YOUR THEME OR PlUGIN
+# CI-CD EXCEPTION
