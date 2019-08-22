@@ -40,8 +40,7 @@ composer update
 5. Ignore all ops files by adding
 
 ```bash
-echo -e "/app
-/data/\n /data/logs\n !/data/.gitkeep\n !/data/logs/.gitkeep\n environments\n scripts\n *.example\n *.lock\n logs.ini\n robots.txt\n $(cat .gitignore)" > .gitifnore
+echo "/data/\n /data/logs\n !/data/.gitkeep\n !/data/logs/.gitkeep\n environments\n scripts\n *.example\n *.lock\n logs.ini\n robots.txt\n $(cat .gitignore)" > .gitignore
 ```
 
 ## New Project
