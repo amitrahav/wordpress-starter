@@ -15,49 +15,50 @@
 
 1. Navigate to project root directory:
 
-```bash
-cd /path/to/your/project/folder/
-```
+   ```bash
+   cd /path/to/your/project/folder/
+   ```
 
 2. Clone zipped specific repo files:
 
-```bash
-$ curl https://codeload.github.com/amitrahav/wordpress-starter/tar.gz/master | tar -xz --strip 1
-```
+   ```bash
+   $ curl https://codeload.github.com/amitrahav/wordpress-starter/tar.gz/master | tar -xz --strip 1
+   ```
 
 3. If necessary remove old structure wp
 
-```bash
-$ rm -rf wp-admin wp-includes license.txt wp-activate.php wp-blog-header.php wp-comments-post.php wp-cron.php wp-links-opml.php wp-load.php wp-login.php wp-mail.php wp-settings.php wp-signup.php wp-trackback.php xmlrpc.php
-```
+   ```bash
+    $ rm -rf wp-admin wp-includes license.txt wp-activate.php wp-blog-header.php wp-comments-post.php wp-cron.php wp-links-opml.php wp-load.php wp-login.php wp-mail.php wp-settings.php wp-signup.php wp-trackback.php xmlrpc.php
+   ```
 
 4. Install all requirements from composer
 
-```bash
-composer update
-```
+   ```bash
+    composer install && composer update
+   ```
 
 5. Ignore all ops files by adding
 
-```bash
-echo "/data/\n /data/logs\n !/data/.gitkeep\n !/data/logs/.gitkeep\n environments\n scripts\n *.example\n *.lock\n logs.ini\n robots.txt\n $(cat .gitignore)" > .gitignore
-```
+   ```bash
+   echo "/data/\n /data/logs\n !/data/.gitkeep\n !/data/logs/.gitkeep\n environments\n scripts\n *.example\n *.lock\n logs.ini\n robots.txt\n $(cat .gitignore)" > .gitignore
+   ```
 
-## New Project
-
-1. create new project:
-
-```bash
-composer create-project amitrahav/wordpress-starter <name-of-project> && cd <name-of-project>
-```
-
-2. Download wp core with composer
-
-```bash
-composer update
-```
-
-3. start developing!
+    <!-- ## New Project
+   
+          1. create new project:
+   
+          ```bash
+          composer create-project amitrahav/wordpress-starter <name-of-project> && cd <name-of-project>
+          ```
+   
+          2. Download wp core with composer
+   
+          ```bash
+          composer update
+          ```
+   
+          3. start developing! 
+    -->
 
 ### Database setup
 
@@ -96,8 +97,22 @@ git checkout -b <issue#>_<short descr></short>
 - `DB_HOST` - Database host
 - `WP_ENV` - Set to environment (`development`, `staging`, `production`)
 - `WP_HOME` - Full URL to WordPress home (http://example.com)
+- `ACF_PRO_KEY` - Acf key for installing the full version of acf plugin
+
+### Setup VScode tasks
+
+If you want you can use the .vscode/tasks.json file for auto processes using vscode tasks.
+you need to install globally node-sass `npm i -g node-sass` and change path to your project (theme or plugin) sass and css files on the tasks file.
 
 ### Require Wp plugins and themes
 
 1. use [composer.json or composer cli](https://wpackagist.org/)
 2. if using docker, add themes or plugins to script/init.sh file to activate on wp cli when docker is up
+
+### Add Acf as a Must-Use Plugins
+
+run this after you run `$composer install && composer update`
+
+```bash
+    $ echo "<?php require_once(__DIR__ . '/advanced-custom-fields-pro/acf.php');" > wp-content/mu-plugins/advanced-custom-fields-pro.php
+```

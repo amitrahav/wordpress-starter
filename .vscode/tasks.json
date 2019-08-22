@@ -1,0 +1,20 @@
+// Sass configuration
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Sass Compile",
+			"type": "shell",
+			"command": "node-sass wp-content/<themesOrPlugins>/${workspaceFolderBasename}/sass/style.scss wp-content/<themesOrPlugins>/${workspaceFolderBasename}/style.css --source-map=true --output-style=compressed",
+			"group": "build"
+		},
+		{
+			"label": "Sass Watch",
+			"type": "shell",
+			"command": "node-sass -r wp-content/<themesOrPlugins>/${workspaceFolderBasename}/sass/style.scss -o wp-content/<themesOrPlugins>/${workspaceFolderBasename}/style.css --source-map=true --output-style=compressed -w",
+			"group": "build"
+		}
+	]
+}
