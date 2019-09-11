@@ -7,13 +7,13 @@
 		{
 			"label": "Sass Compile",
 			"type": "shell",
-			"command": "node-sass wp-content/<themesOrPlugins>/${workspaceFolderBasename}/sass/style.scss wp-content/<themesOrPlugins>/${workspaceFolderBasename}/style.css --source-map=true --output-style=compressed",
+			"command": "node-sass wp-content/<themesOrPlugins>/${workspaceFolderBasename}/sass/style.scss wp-content/<themesOrPlugins>/${workspaceFolderBasename} --source-map=true --output-style=compressed",
 			"group": "build"
 		},
 		{
 			"label": "Sass Watch",
 			"type": "shell",
-			"command": "node-sass -r wp-content/<themesOrPlugins>/${workspaceFolderBasename}/sass/style.scss -o wp-content/<themesOrPlugins>/${workspaceFolderBasename}/style.css --source-map=true --output-style=compressed -w",
+			"command": "node-sass -r wp-content/<themesOrPlugins>/${workspaceFolderBasename}/sass/style.scss -o wp-content/<themesOrPlugins>/${workspaceFolderBasename} --source-map=true --output-style=compressed -w",
 			"group": "build"
 		}
 	]
