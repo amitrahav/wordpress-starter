@@ -7,7 +7,7 @@
 		{
 			"label": "Sass Compile",
 			"type": "shell",
-			"command": "node-sass wp-content/<themesOrPlugins>/${workspaceFolderBasename}/sass/style.scss wp-content/<themesOrPlugins>/${workspaceFolderBasename} --source-map=true --output-style=compressed",
+			"command": "node-sass wp-content/<themesOrPlugins>/${workspaceFolderBasename}/sass/style.scss wp-content/<themesOrPlugins>/${workspaceFolderBasename}/style.css --source-map=true --output-style=compressed",
 			"group": "build"
 		},
 		{

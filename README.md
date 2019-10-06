@@ -25,40 +25,20 @@
    $ curl https://codeload.github.com/amitrahav/wordpress-starter/tar.gz/master | tar -xz --strip 1
    ```
 
-3. If necessary remove old structure wp
+3. Install all requirements from composer
+
+   - By default, ACF PRO is a must use plugin. in order for it to be installed you should add a key to .env file.
 
    ```bash
-    $ rm -rf wp-admin wp-includes license.txt wp-activate.php wp-blog-header.php wp-comments-post.php wp-cron.php wp-links-opml.php wp-load.php wp-login.php wp-mail.php wp-settings.php wp-signup.php wp-trackback.php xmlrpc.php
-   ```
-
-4. Install all requirements from composer
-
-   ```bash
+    mv .env.example .env
     composer install && composer update
    ```
 
-5. Ignore all ops files by adding
+4. Ignore all ops files by adding
 
    ```bash
-   $ echo '\n/data/\n /data/logs\n !/data/.gitkeep\n !/data/logs/.gitkeep\n environments\n scripts\n *.example\n *.lock\n logs.ini\n robots.txt\n # HERE GOES YOUR APP EXCEPTION' >> .gitignore
+   $ echo '\n/data/\n/data/logs\n!/data/.gitkeep\n!/data/logs/.gitkeep\nenvironments\nscripts\n*.example\n*.lock\nlogs.ini\nrobots.txt\n# HERE GOES YOUR APP EXCEPTION' >> .gitignore
    ```
-
-    <!-- ## New Project
-   
-          1. create new project:
-   
-          ```bash
-          composer create-project amitrahav/wordpress-starter <name-of-project> && cd <name-of-project>
-          ```
-   
-          2. Download wp core with composer
-   
-          ```bash
-          composer update
-          ```
-   
-          3. start developing! 
-    -->
 
 ### Database setup
 
