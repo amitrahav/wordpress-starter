@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 if [ -z ${WPCONFIG+x} ]; then WPCONFIG=/Users/amit/.wpconfig; fi
+THEMENAME="${PWD##*/}"
 
 getDefualtValues(){
     
@@ -8,7 +9,6 @@ getDefualtValues(){
     else
         echo "Please create and set your WPCONFIG file on ${WPCONFIG} or change path by WPCONFIG varible"
     fi
-    
 }
 
 taskReplace() {
@@ -19,7 +19,6 @@ taskReplace() {
     else
         local replace='themes'
     fi
-    
     # Note the double quotes
     sed -i "" "s/${search}/${replace}/g" .vscode/tasks.json
 }
@@ -33,7 +32,14 @@ taskReplaceThemeName(){
     fi
 }
 
-gitignoreAdd(){#Params: WhatShoulIADD
+isYes(){ #PARMS answer
+    if [[ $1 == "yes" ]] || [[ $1 == "Yes" ]] || [[ $1 == "טקד" ]] || [[ $1 == "כן" ]]; then
+        return 0 # 0 == True in bash
+    fi
+    return 1
+}
+
+gitignoreAdd(){ #Params: WhatShoulIADD
     echo "\n${1}" >> .gitignore
 }
 
@@ -48,7 +54,7 @@ envReplace() { #Params: ACF_PRO_KEY,
         echo "Please set ACF_PRO_KEY value on your ~/.wpconfig file"
     else
         local search='youracfkeyhere'
-        local replace=$WPCONFIG
+        local replace="$1"
         # Note the double quotes
         sed -i "" "s/${search}/${replace}/g" .env
     fi
@@ -107,86 +113,101 @@ gettingRepoDialog(){
 initializeThemeDialog(){
     
     echo "New Theme Name (if you leave it blank it will be the name of your project root dir)"
-    read THEMENAME
+
+    read newThemeName
+    if [ -z {$newThemeName+x} ]
+    then
+        $THEMENAME = $newThemeName
+    fi
+    mkdir wp-content/themes/$THEMENAME
     taskReplaceThemeName
-    if [ -z {$THEMENAME+x} ]; then; THEMENAME = "${PWD##*/}"; fi
     gitignoreAdd "!/wp-content/themes/${THEMENAME}"
     
-    local dirsToCreate = ("sass","partials","assets","js","includes")
+    declare -a dirsToCreate=("sass" "partials" "assets" "js" "includes")
     for i in ${dirsToCreate[@]}; do
-        mkdir wp-content/themes/${THEMENAME}/${dirsToCreate[$i]}
+        mkdir wp-content/themes/$THEMENAME/${i}
     done
-    touch 'includes/acf-register.php'
-    touch 'includes/cpt-register.php'
     
+    touch "wp-content/themes/${THEMENAME}/includes/acf-register.php" "wp-content/themes/${THEMENAME}/includes/cpt-register.php"
     
     echo "/*!\nTheme Name: ${THEMENAME}\nTheme URI:\nDescription: A custom theme for the ${THEMENAME} project\nAuthor: TheTwo LTD.\nAuthor URI: http://the-two.co\nVersion: 1.0\nTags: clean, advanced, responsive, great\n*/" > wp-content/themes/${THEMENAME}/sass/style.scss
-    echo '<!DOCTYPE html>\n<html>\n\n<head>\n   <title>\n        <?php\n        wp_title('|', true, 'right');\n        bloginfo('name');\n        ?>\n    </title>\n    <meta charset="utf-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.3, user-scalable=1">\n    <?php wp_head(); ?>\n</head>' > wp-content/themes/${THEMENAME}/header.php
+    echo '<!DOCTYPE html>\n<html>\n\n<head>\n   <title>\n        <?php\n        wp_title("|", true, "right");\n        bloginfo("name");\n        ?>\n    </title>\n    <meta charset="utf-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.3, user-scalable=1">\n    <?php wp_head(); ?>\n</head>' > wp-content/themes/${THEMENAME}/header.php
     echo '<footer>\n\n\n</footer>\n<?php wp_footer(); ?>\n</body>\n\n</html>' > wp-content/themes/${THEMENAME}/footer.php
     
     echo "Wanna Talk About Auto Inserting Functions? (Yes to continue)"
-    read local functions
+    read functions
+
     # Function File Addition
-    local functionsFilePath = "wp-content/themes/${THEMENAME}/functions.php"
-    local styles = (["main"]="get_template_directory_uri() . '/style.css'")
-    local scripts = (["main"]="get_template_directory_uri() . '/js/app.js''")
-    local otherFunctions = ()
+    local functionsFilePath="wp-content/themes/${THEMENAME}/functions.php"
+    declare -a styleNames=("main")
+    declare -a styles=("get_template_directory_uri() . '/style.css'")
+    declare -a scriptNames=("main")
+    declare -a scripts=("get_template_directory_uri() . '/js/app.js'")
+    declare -a otherFunctions=()
     touch $functionsFilePath
     # # Any Other?
-    if [ $functions -e "yes"] || [ $functions -e "Yes"] || [ $functions -e "טקד"] || [ $functions -e "כן"]; then
+    if isYes $functions ; then
         echo "Add font awesome? (Yes/No)"
-        read local fontAwesome
-        if [ $fontAwesome -e "yes"] || [ $fontAwesome -e "Yes"] || [ $fontAwesome -e "טקד"] || [ $fontAwesome -e "כן"]; then
-            styles['prefix-font-awesome'] = '//netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'
+        read fontAwesome
+        if isYes $fontAwesome ; then
+            styleNames[${#styleNames[@]}]="prefix-font-awesome"
+            styles[${#styles[@]}]='"//netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"'
         fi
         
         echo "Add Wow.js? (Yes/No)"
-        read local wowJs
-        if [ $wowJs -e "yes"] || [ $wowJs -e "Yes"] || [ $wowJs -e "טקד"] || [ $wowJs -e "כן"]; then
-            scripts['wowjs'] = '//cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js'
+        read wowJs
+        if isYes $wowJs ; then
+            styleNames[${#styleNames[@]}]='wowjs'
+            styles[${#styles[@]}]='"//cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"'
         fi
         
         echo "Add Slick.js? (Yes/No)"
-        read local slickJs
-        if [ $slickJs -e "yes"] || [ $slickJs -e "Yes"] || [ $slickJs -e "טקד"] || [ $slickJs -e "כן"]; then
-            scripts['slick'] = '//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js'
-            styles['slickTheme']='//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css'
-            styles['slick']='//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css'
+        read slickJs
+        if isYes $slickJs ; then
+            scriptNames[${#scriptNames[@]}]='slick'
+            scripts[${#scripts[@]}]='"//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"'
+            styleNames[${#styleNames[@]}]='slickTheme' 
+            styleNames[${#styleNames[@]}]='slick' 
+            styles[${#styles[@]}]='"//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css"'
+            styles[${#styles[@]}]='"//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"' 
         fi
         
         echo "Add Vivus.js? (Yes/No)"
-        read local vivusJs
-        if [ $vivusJs -e "yes"] || [ $vivusJs -e "Yes"] || [ $vivusJs -e "טקד"] || [ $vivusJs -e "כן"]; then
-            scripts['vivus'] = '//cdnjs.cloudflare.com/ajax/libs/vivus/0.4.5/vivus.min.js'
+        read vivusJs
+        if isYes $vivusJs ; then
+            scriptNames[${#scriptNames[@]}]='vivus'
+            scripts[${#scripts[@]}]='//cdnjs.cloudflare.com/ajax/libs/vivus/0.4.5/vivus.min.js'
         fi
         
         echo "Add Svg Support? (Yes/No)"
-        read local svgSupport
-        if [ $svgSupport -e "yes"] || [ $svgSupport -e "Yes"] || [ $svgSupport -e "טקד"] || [ $svgSupport -e "כן"]; then
-            otherFunctions +=('\n// allow uploading svgs\nfunction cc_mime_types($mimes)\n{\n    $mimes["svg"] = "image/svg+xml";\n\n   return $mimes;\n}\nadd_filter("upload_mimes", "cc_mime_types");\n')
+        read svgSupport
+        if isYes $svgSupport ; then        
+            otherFunctions[${#otherFunctions[@]}]='\n// allow uploading svgs\nfunction cc_mime_types($mimes)\n{\n    $mimes["svg"] = "image/svg+xml";\n\n   return $mimes;\n}\nadd_filter("upload_mimes", "cc_mime_types");\n'
         fi
         
     fi
+
     # # Styles
     echo "<?php\n\n// load the theme css\nadd_action('wp_enqueue_scripts', 'theme_styles');\nfunction theme_styles()\n{\n" >> $functionsFilePath
-    for i in ${styles[@]}; do
-        echo "wp_enqueue_style('$i', ${styles[$i]}, '1.9');\n" >> $functionsFilePath
+    for i in "${!styles[@]}"; do
+        echo "      wp_enqueue_style('${styleNames[$i]}', ${styles[$i]}, '1.9');\n" >> $functionsFilePath
     done
     echo "}\n\n" >> $functionsFilePath
     # # Scripts
-    echo "<?php\n\n// load the theme css\nadd_action('wp_enqueue_scripts', 'theme_styles');\nfunction theme_styles()\n{\n" >> $functionsFilePath
-    for i in ${scripts[@]}; do
-        echo "wp_register_script('$i',  ${scripts[$i]}, '1.9');\n" >> $functionsFilePath
+    echo "\n\n// load the theme css\nadd_action('wp_enqueue_scripts', 'theme_js');\nfunction theme_js()\n{\n" >> $functionsFilePath
+    for i in ${!scripts[@]}; do
+        echo "      wp_register_script('${scriptNames[$i]}',  ${scripts[$i]}, '1.9');\n" >> $functionsFilePath
     done
     for (( idx=${#scripts[@]}-1 ; idx>=0 ; idx-- )) ; do
-        echo "wp_enqueue_script('$idx');" >> $functionsFilePath
+        echo "      wp_enqueue_script('${scriptNames[$idx]}');" >> $functionsFilePath
     done
     
     echo "}\n\n" >> $functionsFilePath
-    
+
     # # Other Functions
-    echo "// hide admin bar on front\nshow_admin_bar(false);\n\n// disable gutenberg\nadd_filter('use_block_editor_for_post', '__return_false');\n\n// Adding thumbnail support\nadd_theme_support('post-thumbnails');/n/n" >> $functionsFilePath
-    echo "// Register ACF\ninclude 'includes/acf-register.php';\n// Register CPT\n include 'includes/cpt-register.php';\n" >> $functionsFilePath
+    echo "// hide admin bar on front\nshow_admin_bar(false);\n\n// disable gutenberg\nadd_filter('use_block_editor_for_post', '__return_false');\n\n// Adding thumbnail support\nadd_theme_support('post-thumbnails');\n\n" >> $functionsFilePath
+    echo "// Register ACF\ninclude 'includes/acf-register.php';\n// Register CPT\ninclude 'includes/cpt-register.php';\n" >> $functionsFilePath
+    echo "\n\n${otherFunctions}" >> $functionsFilePath
     
 }
 
@@ -216,12 +237,8 @@ taskReplace
 initializingEnv
 envReplace $ACF_PRO_KEY
 
-if [ "$Building" == "theme"]
-then
+if [ ${Building} == "theme" ];then
     oldOrNewThemeDialog
-elif ["$Building" == "plugin" ]
-then
-    
 else
-    buildingDialog
+    echo $Building
 fi
