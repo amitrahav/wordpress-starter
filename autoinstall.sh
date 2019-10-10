@@ -128,7 +128,9 @@ initializeThemeDialog(){
         mkdir wp-content/themes/$THEMENAME/${i}
     done
     
-    touch "wp-content/themes/${THEMENAME}/includes/acf-register.php" "wp-content/themes/${THEMENAME}/includes/cpt-register.php"
+    touch "wp-content/themes/${THEMENAME}/includes/acf-register.php" "wp-content/themes/${THEMENAME}/includes/cpt-register.php" 
+    git clone https://gist.github.com/ebe0f942b52a656c92c9ffccd16151be.git "wp-content/themes/$THEMENAME/gist" && mv "wp-content/themes/$THEMENAME/gist/index-starter" "wp-content/themes/$THEMENAME/index.php" && rm -rf "wp-content/themes/$THEMENAME/gist/"
+    git clone https://gist.github.com/47482e834c2d03a3ca3444114909cbc6.git "wp-content/themes/$THEMENAME/gist" && mv "wp-content/themes/$THEMENAME/gist/script-starter" "wp-content/themes/$THEMENAME/js/app.js" && rm -rf "wp-content/themes/$THEMENAME/gist/"
     
     echo "/*!\nTheme Name: ${THEMENAME}\nTheme URI:\nDescription: A custom theme for the ${THEMENAME} project\nAuthor: TheTwo LTD.\nAuthor URI: http://the-two.co\nVersion: 1.0\nTags: clean, advanced, responsive, great\n*/" > wp-content/themes/${THEMENAME}/sass/style.scss
     echo '<!DOCTYPE html>\n<html>\n\n<head>\n   <title>\n        <?php\n        wp_title("|", true, "right");\n        bloginfo("name");\n        ?>\n    </title>\n    <meta charset="utf-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.3, user-scalable=1">\n    <?php wp_head(); ?>\n</head>' > wp-content/themes/${THEMENAME}/header.php
