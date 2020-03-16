@@ -76,17 +76,29 @@ buildingDialog(){
     select opt in "${options[@]}"
     do
         case $opt in
-            "Theme")
-                Building='theme'
+            "Yep")
+                return "theme"
                 break
             ;;
-            "Plugin")
-                Building='plugin'
+            "Nope")
+                return "plugin"
                 break
             ;;
             *) echo "invalid option $REPLY";;
         esac
     done
+
+    # select opt in "${options[@]}" "Quit"; do
+    #     case $REPLY in
+    #         "Theme")
+    #             return "theme"
+    #         ;;
+    #         "Plugin")
+    #             return "plugin"
+    #         ;;
+    #         *) echo "invalid option $REPLY";;
+    #     esac
+    # done
 }
 
 pullGitDialog(){ #Params: RepoUrl, relativePath
@@ -211,6 +223,11 @@ initializeThemeDialog(){
     echo "// Register ACF\ninclude 'includes/acf-register.php';\n// Register CPT\ninclude 'includes/cpt-register.php';\n" >> $functionsFilePath
     echo "\n\n${otherFunctions}" >> $functionsFilePath
     
+}
+
+initializePluginDialog(){
+    # Script for changing plugin name files
+    # $ find . -iname "*plugin-name*" -exec rename 's/plugin-name/pipedrive-users/' '{}' \;
 }
 
 oldOrNewThemeDialog(){
