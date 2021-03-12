@@ -3,7 +3,7 @@ if [ -z ${WPCONFIG+x} ]; then WPCONFIG=/Users/amit/.wpconfig; fi
 THEMENAME="${PWD##*/}"
 
 getDefualtValues(){
-    
+    echo "getting defualt values..."
     if [ -f "$WPCONFIG" ]; then
         source "$WPCONFIG"
     else
@@ -13,12 +13,7 @@ getDefualtValues(){
 
 taskReplace() {
     local search='<themesOrPlugins>'
-    if [ -z {$Building+x} ]
-    then
-        local replace="$Building"+"s"
-    else
-        local replace='themes'
-    fi
+    local replace="$Building"+"s"
     # Note the double quotes
     sed -i "" "s/${search}/${replace}/g" .vscode/tasks.json
 }
@@ -36,15 +31,18 @@ isYes(){ #PARMS answer
     if [[ $1 == "yes" ]] || [[ $1 == "Yes" ]] || [[ $1 == "טקד" ]] || [[ $1 == "כן" ]]; then
         return 0 # 0 == True in bash
     fi
-    return 1
+    return 1 # 1 == False in bash
 }
 
 gitignoreAdd(){ #Params: WhatShoulIADD
-    echo "\n${1}" >> .gitignore
+    echo -e "\n${1}" >> .gitignore
 }
 
 initializingEnv(){
-    mv .env.example .env
+    echo "Copy env file"
+    if [ ! -f '.env.example' ]; then
+        cp .env.example .env
+    fi
 }
 
 envReplace() { #Params: ACF_PRO_KEY,
@@ -72,33 +70,21 @@ gitignoreUpdate(){
 
 buildingDialog(){
     echo "Hello, What Are You Building?"
-    options=("Theme" "Plugin")
-    select opt in "${options[@]}"
-    do
-        case $opt in
-            "Yep")
-                return "theme"
-                break
+    local options=("Theme" "Plugin")
+
+    select opt in "${options[@]}"; do
+        case $REPLY in
+            "1")
+                Building="theme"
+                return 1
             ;;
-            "Nope")
-                return "plugin"
-                break
+            "2")
+                Building="plugin"
+                return 1
             ;;
             *) echo "invalid option $REPLY";;
         esac
     done
-
-    # select opt in "${options[@]}" "Quit"; do
-    #     case $REPLY in
-    #         "Theme")
-    #             return "theme"
-    #         ;;
-    #         "Plugin")
-    #             return "plugin"
-    #         ;;
-    #         *) echo "invalid option $REPLY";;
-    #     esac
-    # done
 }
 
 pullGitDialog(){ #Params: RepoUrl, relativePath
@@ -144,11 +130,11 @@ initializeThemeDialog(){
     git clone https://gist.github.com/ebe0f942b52a656c92c9ffccd16151be.git "wp-content/themes/$THEMENAME/gist" && mv "wp-content/themes/$THEMENAME/gist/index-starter" "wp-content/themes/$THEMENAME/index.php" && rm -rf "wp-content/themes/$THEMENAME/gist/"
     git clone https://gist.github.com/47482e834c2d03a3ca3444114909cbc6.git "wp-content/themes/$THEMENAME/gist" && mv "wp-content/themes/$THEMENAME/gist/script-starter" "wp-content/themes/$THEMENAME/js/app.js" && rm -rf "wp-content/themes/$THEMENAME/gist/"
     
-    echo "/*!\nTheme Name: ${THEMENAME}\nTheme URI:\nDescription: A custom theme for the ${THEMENAME} project\nAuthor: TheTwo LTD.\nAuthor URI: http://the-two.co\nVersion: 1.0\nTags: clean, advanced, responsive, great\n*/" > wp-content/themes/${THEMENAME}/sass/style.scss
-    echo '<!DOCTYPE html>\n<html>\n\n<head>\n   <title>\n        <?php\n        wp_title("|", true, "right");\n        bloginfo("name");\n        ?>\n    </title>\n    <meta charset="utf-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.3, user-scalable=1">\n    <?php wp_head(); ?>\n</head>' > wp-content/themes/${THEMENAME}/header.php
-    echo '<footer>\n\n\n</footer>\n<?php wp_footer(); ?>\n</body>\n\n</html>' > wp-content/themes/${THEMENAME}/footer.php
+    echo -e "/*!\nTheme Name: ${THEMENAME}\nTheme URI:\nDescription: A custom theme for the ${THEMENAME} project\nAuthor: TheTwo LTD.\nAuthor URI: http://the-two.co\nVersion: 1.0\nTags: clean, advanced, responsive, great\n*/" > wp-content/themes/${THEMENAME}/sass/style.scss
+    echo -e '<!DOCTYPE html>\n<html>\n\n<head>\n   <title>\n        <?php\n        wp_title("|", true, "right");\n        bloginfo("name");\n        ?>\n    </title>\n    <meta charset="utf-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.3, user-scalable=1">\n    <?php wp_head(); ?>\n</head>' > wp-content/themes/${THEMENAME}/header.php
+    echo -e '<footer>\n\n\n</footer>\n<?php wp_footer(); ?>\n</body>\n\n</html>' > wp-content/themes/${THEMENAME}/footer.php
     
-    echo "Wanna Talk About Auto Inserting Functions? (Yes to continue)"
+    echo -e "Wanna Talk About Auto Inserting Functions? (Yes to continue)"
     read functions
 
     # Function File Addition
@@ -202,32 +188,32 @@ initializeThemeDialog(){
     fi
 
     # # Styles
-    echo "<?php\n\n// load the theme css\nadd_action('wp_enqueue_scripts', 'theme_styles');\nfunction theme_styles()\n{\n" >> $functionsFilePath
+    echo -e "<?php\n\n// load the theme css\nadd_action('wp_enqueue_scripts', 'theme_styles');\nfunction theme_styles()\n{\n" >> $functionsFilePath
     for i in "${!styles[@]}"; do
-        echo "      wp_enqueue_style('${styleNames[$i]}', ${styles[$i]}, '1.9');\n" >> $functionsFilePath
+        echo -e "      wp_enqueue_style('${styleNames[$i]}', ${styles[$i]}, '1.9');\n" >> $functionsFilePath
     done
-    echo "}\n\n" >> $functionsFilePath
+    echo -e "}\n\n" >> $functionsFilePath
     # # Scripts
-    echo "\n\n// load the theme css\nadd_action('wp_enqueue_scripts', 'theme_js');\nfunction theme_js()\n{\n" >> $functionsFilePath
+    echo -e "\n\n// load the theme css\nadd_action('wp_enqueue_scripts', 'theme_js');\nfunction theme_js()\n{\n" >> $functionsFilePath
     for i in ${!scripts[@]}; do
-        echo "      wp_register_script('${scriptNames[$i]}',  ${scripts[$i]}, '1.9');\n" >> $functionsFilePath
+        echo  -e "      wp_register_script('${scriptNames[$i]}',  ${scripts[$i]}, '1.9');\n" >> $functionsFilePath
     done
     for (( idx=${#scripts[@]}-1 ; idx>=0 ; idx-- )) ; do
-        echo "      wp_enqueue_script('${scriptNames[$idx]}');" >> $functionsFilePath
+        echo -e "      wp_enqueue_script('${scriptNames[$idx]}');" >> $functionsFilePath
     done
     
-    echo "}\n\n" >> $functionsFilePath
+    echo -e "}\n\n" >> $functionsFilePath
 
     # # Other Functions
-    echo "// hide admin bar on front\nshow_admin_bar(false);\n\n// disable gutenberg\nadd_filter('use_block_editor_for_post', '__return_false');\n\n// Adding thumbnail support\nadd_theme_support('post-thumbnails');\n\n" >> $functionsFilePath
-    echo "// Register ACF\ninclude 'includes/acf-register.php';\n// Register CPT\ninclude 'includes/cpt-register.php';\n" >> $functionsFilePath
-    echo "\n\n${otherFunctions}" >> $functionsFilePath
+    echo -e "// hide admin bar on front\nshow_admin_bar(false);\n\n// disable gutenberg\nadd_filter('use_block_editor_for_post', '__return_false');\n\n// Adding thumbnail support\nadd_theme_support('post-thumbnails');\n\n" >> $functionsFilePath
+    echo -e "// Register ACF\ninclude 'includes/acf-register.php';\n// Register CPT\ninclude 'includes/cpt-register.php';\n" >> $functionsFilePath
+    echo -e "\n\n${otherFunctions}" >> $functionsFilePath
     
 }
 
 initializePluginDialog(){
     # Script for changing plugin name files
-    # $ find . -iname "*plugin-name*" -exec rename 's/plugin-name/pipedrive-users/' '{}' \;
+    $ find . -iname "*plugin-name*" -exec rename 's/plugin-name/pipedrive-users/' '{}' \;
 }
 
 oldOrNewThemeDialog(){
@@ -256,8 +242,8 @@ taskReplace
 initializingEnv
 envReplace $ACF_PRO_KEY
 
-if [ ${Building} == "theme" ];then
+if [[ ${Building} == "theme" ]];then
     oldOrNewThemeDialog
 else
-    echo $Building
+    echo "Does not support $Building yet" 
 fi
